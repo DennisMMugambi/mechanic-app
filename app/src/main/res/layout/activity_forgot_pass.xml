@@ -31,77 +31,75 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/forgot_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/forgot_password"
+        android:textSize="20sp"
+        android:textColor="@color/login_form_detail"
+        android:layout_margin="13dp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_right"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/iv"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/reset_instructions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="@string/reset_instructions"
+        android:textColor="@color/login_form_detail"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_right"
+        app:layout_constraintHorizontal_bias="0.54"
+        app:layout_constraintStart_toStartOf="@+id/guideline_left"
+        app:layout_constraintTop_toBottomOf="@+id/forgot_password" />
+
     <EditText
         android:id="@+id/username"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/hint_email"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:padding="16dp"
         android:textColorHint="@color/login_form_detail"
         app:layout_constraintEnd_toStartOf="@id/guideline_right"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/iv"
+        app:layout_constraintTop_toBottomOf="@+id/reset_instructions"
         android:inputType="textEmailAddress"
         android:background="@drawable/et_bg"/>
 
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textColorHint="@color/login_form_detail"
-        android:background="@drawable/et_bg"
-        android:hint="@string/hint_password"
-        android:inputType="textPassword"
-        android:drawableEnd="@drawable/visibility"
-        android:padding="16dp"
-        app:layout_constraintEnd_toStartOf="@id/guideline_right"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
-
     <Button
-        android:id="@+id/btn_login"
+        android:id="@+id/btn_reset"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:background="@drawable/btn_bg"
         android:padding="16dp"
-        android:text="@string/login"
+        android:text="@string/reset_password"
         android:textAllCaps="false"
         android:textColor="@color/login_form_detail"
         app:layout_constraintEnd_toStartOf="@+id/guideline_right"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/username"/>
 
     <TextView
-        android:id="@+id/forgot_password"
+        android:id="@+id/back_to_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/forgot_pass"
+        android:text="@string/back"
+        android:textSize="20sp"
         android:textColor="@color/login_form_detail"
+        android:layout_margin="13dp"
         app:layout_constraintEnd_toStartOf="@+id/guideline_right"
         app:layout_constraintStart_toStartOf="@+id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login"
+        app:layout_constraintTop_toBottomOf="@+id/btn_reset"
         android:layout_marginTop="16dp"/>
-
-    <TextView
-        android:id="@+id/sign_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Dont_have_an_account"
-        android:textColor="@color/login_form_detail"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_right"
-        app:layout_constraintStart_toStartOf="@+id/guideline_left"
-        app:layout_constraintTop_toTopOf="@+id/bottom_line"
-        android:layout_marginTop="16dp"/>
-
 
     <View
-        android:id="@+id/bottom_line"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginBottom="50dp"
@@ -109,4 +107,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

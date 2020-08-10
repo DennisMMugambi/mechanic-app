@@ -20,5 +20,17 @@
     <string name="stuck">Stuck</string>
     <string name="faulty">Faulty</string>
     <string name="service">Service</string>
-
+    <string name="sign_up">Sign up</string>
+    <string name="reset_instructions">We just need your registered Email id in order
+        to send you password reset instructions</string>
+    <string name="reset_password">RESET PASSWORD</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="Dont_have_an_account">Sign up instead?</string>
+    <string name="back">&#60;&#60;BACK</string>
+    <string name="minimum_password">Password has to be at least 6 characters in length</string>
+    <string name="auth_failed">Registration unsuccessful, try again or contact support for help</string>
+    <string name="proceed">Once you have verified your email address click the button below or request a verification resend
+    if you did not receive any.</string>
+    <string name="resend">RESEND</string>
+    <string name="btn_proceed">PROCEED</string>
 </resources>

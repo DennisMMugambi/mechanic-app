@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "765145930121",
+    "firebase_url": "https://technician-app-2b919.firebaseio.com",
+    "project_id": "technician-app-2b919",
+    "storage_bucket": "technician-app-2b919.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765145930121:android:d160cc6a402e15a0112958",
+        "android_client_info": {
+          "package_name": "com.s.technician_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765145930121-8htagvs0q08aita42j9as7s2mj88smcf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ-G9sGG-xQ_KXBVfJmaCaqwaXm2mjtY4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "765145930121-8htagvs0q08aita42j9as7s2mj88smcf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
