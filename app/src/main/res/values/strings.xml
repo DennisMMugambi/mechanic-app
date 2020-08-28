@@ -10,6 +10,7 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="rating">0.0</string>
     <string name="technician">Technician</string>
     <string name="passenger">Passenger</string>
     <string name="client">Client</string>
@@ -33,4 +34,31 @@
     if you did not receive any.</string>
     <string name="resend">RESEND</string>
     <string name="btn_proceed">PROCEED</string>
+    <string name="emergency">EMERGENCY APP</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="phone_sign_in">Sign in with phone</string>
+    <string name="google_sign_in">Sign in with Google</string>
+    <string name="number_hint">Enter your phone number</string>
+    <string name="web_client_id">765145930121-8htagvs0q08aita42j9as7s2mj88smcf.apps.googleusercontent.com</string>
+    <string name="btn_phone_proceed">Verify number</string>
+    <string name="verify">Enter the verification code sent to your number below</string>
+    <string name="verify_hint">Input code Here</string>
+    <string name="verify_sign_in">Verify and Sign In</string>
+    <string name="register_text">Let\'s start with creating your account</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="continue_text">Continue</string>
+    <string name="title_activity_technician_home">TechnicianHomeActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_logout">Sign Out</string>
+    <string name="call_center">Call center</string>
 </resources>

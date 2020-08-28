@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PhoneSignInActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="horizontal">
+
+        <com.hbb20.CountryCodePicker
+            android:id="@+id/cpp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            app:ccp_textSize="16sp"
+            app:ccp_autoDetectCountry="true"
+            app:ccp_showNameCode="true"/>
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:maxLength="10"
+            android:hint="@string/number_hint"
+            android:textSize="16sp"
+            android:ems="10"
+            android:inputType="phone" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/saved_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        android:layout_margin="20dp"
+        android:text="@string/btn_phone_proceed"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

@@ -74,7 +74,7 @@ public class VerificationActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         assert user != null;
         if(user.isEmailVerified()){
-            startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+            startActivity(new Intent(getApplicationContext(), TechnicianHomeActivity.class));
         } else {
             Toast.makeText(getApplicationContext(),
                     "You have not verified your email, try again or hit resend for a new link",
