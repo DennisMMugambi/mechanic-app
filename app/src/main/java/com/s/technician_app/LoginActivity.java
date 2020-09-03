@@ -48,7 +48,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.s.technician_app.Model.TechnicianInfoModel;
+import com.s.technician_app.Utils.UserUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -57,7 +60,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
+    public static FirebaseAuth mAuth;
     private Button mLogin;
     private TextView mReset, mSign_up;
     private EditText mEmail, mPassword;
@@ -107,6 +110,21 @@ public class LoginActivity extends AppCompatActivity {
         if(mAuth.getCurrentUser() != null) {
             // startActivity(new Intent(getApplicationContext(), MapsActivity.class));
             //finish();
+            //update token
+            FirebaseInstanceId.getInstance()
+                    .getInstanceId()
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+                @Override
+                public void onSuccess(InstanceIdResult instanceIdResult) {
+                    Log.d("TOKEN", instanceIdResult.getToken());
+                    UserUtils.updateToken(LoginActivity.this, instanceIdResult.getToken());
+                }
+            });
             checkUserFromFirebase();
         }
         init();

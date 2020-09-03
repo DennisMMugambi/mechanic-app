@@ -1,7 +1,19 @@
 package com.s.technician_app.Model;
 
 public class TechnicianInfoModel {
-    private String firstName,lastName,phoneNumber;
+    private String firstName;
+    private String lastName;
+    private String phoneNumber;
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    private String avatar;
     private double rating;
 
     public TechnicianInfoModel() {

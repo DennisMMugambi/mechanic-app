@@ -56,6 +56,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.s.technician_app.Common;
+import com.s.technician_app.LoginActivity;
 import com.s.technician_app.R;
 
 import java.util.Objects;
@@ -96,7 +97,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onDestroy() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        geoFire.removeLocation(FirebaseAuth.getInstance().getCurrentUser().getUid());
+       // geoFire.removeLocation(LoginActivity.mAuth.getInstance().getCurrentUser().getUid());
         onlineRef.removeEventListener(onlineValueEventListener);
         super.onDestroy();
     }
