@@ -221,6 +221,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     //User is signed in
                     Log.d("error", "onAuthStateChanged:signed_in:" + user.getUid());
+
                 } else {
                     //user is signed out
                     Log.d("error", "onAuthStateChanged:signed_out");
