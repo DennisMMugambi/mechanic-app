@@ -62,4 +62,15 @@
     <string name="menu_logout">Sign Out</string>
     <string name="call_center">Call center</string>
     <string name="permission_require">location permission required</string>
+    <string name="decline">Decline</string>
+    <string name="title_activity_call_center">CallCenterActivity</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="title_activity_call__center">Call_Center</string>
+    <string name="title_activity_call_c">CallCActivity</string>
+    <string name="title_activity_call_center_home">CallCenterHome</string>
+    <string name="title_activity_tabbed">TabbedActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="title_activity_call_home">CallHomeActivity</string>
 </resources>

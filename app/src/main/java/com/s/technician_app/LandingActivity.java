@@ -17,4 +17,8 @@ public class LandingActivity extends AppCompatActivity {
     public void startLoginActivity(View v){
         startActivity(new Intent(v.getContext(), LoginActivity.class));
     }
+
+    public void startCallCenterActivity(View v){
+       // startActivity(new Intent(v.getContext(), CallCenterActivity.class));
+    }
 }
