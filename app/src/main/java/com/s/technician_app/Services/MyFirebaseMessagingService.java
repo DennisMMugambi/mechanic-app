@@ -29,11 +29,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Map<String, String> dataReceived = remoteMessage.getData();
         if(dataReceived != null){
+                Common.showNotification(this, new Random().nextInt(),
+                        dataReceived.get(Common.NOTIFICATION_TITLE),
+                        dataReceived.get(Common.NOTIFICATION_CONTENT),
+                        null);
             if(dataReceived.get(Common.NOTIFICATION_TITLE).equals(Common.REQUEST_TECHNICIAN_TITLE)){
 
                 EventBus.getDefault().postSticky(new TechnicianRequestReceived(
                         dataReceived.get(Common.RIDER_KEY),
-                dataReceived.get(Common.RIDER_PICKUP_LOCATION)
+                dataReceived.get(Common.PASSENGER_PICKUP_LOCATION)
                         ));
             } else {
                 Common.showNotification(this, new Random().nextInt(),

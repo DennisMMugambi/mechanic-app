@@ -25,9 +25,9 @@ public class Common {
     public static final String TOKEN_REFERENCE = "TOKEN";
     public static final String NOTIFICATION_TITLE = "title";
     public static final String NOTIFICATION_CONTENT = "body";
-    public static final String RIDER_PICKUP_LOCATION = "PickupLocation";
-    public static final String RIDER_KEY = "RiderKey";
-    public static final String REQUEST_TECHNICIAN_TITLE = "RequestTechnician";
+    public static final String PASSENGER_PICKUP_LOCATION = "pickupLocation";
+    public static final String RIDER_KEY = "Rider key";
+    public static final String REQUEST_TECHNICIAN_TITLE = "You have a request!";
 
     public static TechnicianInfoModel currentUser;
 
@@ -85,13 +85,13 @@ public class Common {
         {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
                     "passenger_requests", NotificationManager.IMPORTANCE_HIGH);
-                    notificationChannel.setDescription("requests");
-                    notificationChannel.enableLights(true);
-                    notificationChannel.setLightColor(Color.RED);
-                    notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
-                    notificationChannel.enableVibration(true);
+            notificationChannel.setDescription("requests");
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(Color.RED);
+            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+            notificationChannel.enableVibration(true);
 
-                    notificationManager.createNotificationChannel(notificationChannel);
+            notificationManager.createNotificationChannel(notificationChannel);
         }
         NotificationCompat.Builder builder= new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID);
         builder.setContentText(title)
@@ -107,4 +107,5 @@ public class Common {
         Notification notification = builder.build();
         notificationManager.notify(id, notification);
     }
+
 }
