@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+    <item android:id="@+id/technicians"
+        android:icon="@drawable/ic_star"
+        android:title="Technicians"
+        android:checked="true"/>
+    <item android:id="@+id/reviews"
+        android:icon="@drawable/ic_star"
+        android:title="Customer reviews"/>
+    <item android:id="@+id/history"
+        android:icon="@drawable/ic_star"
+        android:title="Service history"/>
+    <item android:id="@+id/active_requests"
+        android:icon="@drawable/ic_star"
+        android:title="Active requests"/>
+    </group>
+
+
+</menu>

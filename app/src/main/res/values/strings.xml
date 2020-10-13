@@ -38,6 +38,9 @@
     <string name="directions_api_key">AIzaSyA6MUqPRN-Mxfp8H8yp1NmWpOHbhm8C0Ew</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="drawer_open">Open navigation drawer</string>
+
+    <string name="drawer_close">Close navigation drawer</string>
     <string name="phone_sign_in">Sign in with phone</string>
     <string name="google_sign_in">Sign in with Google</string>
     <string name="number_hint">Enter your phone number</string>
@@ -74,4 +77,8 @@
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="title_activity_call_home">CallHomeActivity</string>
+    <string name="Open">open</string>
+    <string name="Close">close</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
