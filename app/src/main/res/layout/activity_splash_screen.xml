@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="@string/emergency"
         android:layout_centerInParent="true"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorPrimary"
         android:textSize="30sp"/>
     <ProgressBar
         android:id="@+id/progress_bar"

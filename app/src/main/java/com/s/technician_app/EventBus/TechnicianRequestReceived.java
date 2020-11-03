@@ -8,6 +8,9 @@ public class TechnicianRequestReceived {
         this.pickupLocation = pickupLocation;
     }
 
+    public TechnicianRequestReceived() {
+    }
+
     public String getKey() {
         return key;
     }

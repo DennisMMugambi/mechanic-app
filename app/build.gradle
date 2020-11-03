@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.s.technician_app"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -76,6 +76,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:2.0.0'
 
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
+    implementation 'com.github.koushikcse:loading-button-android:1.0'
 
     // Support for Java 8 features
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.10'

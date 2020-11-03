@@ -244,8 +244,8 @@ public class LoginActivity extends AppCompatActivity {
         mReset.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), ForgotPassActivity.class)));
         mSign_up.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), SignUpActivity.class)));
         mPhoneLogin.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), PhoneSignInActivity.class)));
-        mGoogleSignIn = findViewById(R.id.btn_google);
-        mGoogleSignIn.setOnClickListener(v -> {
+//        mGoogleSignIn = findViewById(R.id.btn_google);
+/*        mGoogleSignIn.setOnClickListener(v -> {
 
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.web_client_id))
@@ -256,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
 
             Intent intent = googleSignInClient.getSignInIntent();
             startActivityForResult(intent, RC_SIGN_IN);
-        });
+        });*/
         mLogin.setOnClickListener(v -> {
             String email = mEmail.getText().toString();
             final String password = mPassword.getText().toString();
@@ -333,7 +333,7 @@ public class LoginActivity extends AppCompatActivity {
             email = account.getEmail();
 
             AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-            firebaseAuthWithGoogle(credential);
+            //firebaseAuthWithGoogle(credential);
         } else {
             //Google Sign In failed
             Log.e("m", "Login Unsuccessful." + result);
@@ -342,7 +342,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void firebaseAuthWithGoogle(AuthCredential credential) {
+   /* private void firebaseAuthWithGoogle(AuthCredential credential) {
 
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -360,7 +360,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 });
-    }
+    }*/
 
     private void gotoMain(){
         Intent intent = new Intent(getApplicationContext(), TechnicianHomeActivity.class);

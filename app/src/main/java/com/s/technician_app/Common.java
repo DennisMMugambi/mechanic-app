@@ -18,6 +18,7 @@ import com.s.technician_app.Services.MyFirebaseMessagingService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Common {
     public static final String TECHNICIAN_INFO_REFERENCE = "TechnicianInfo";
@@ -28,8 +29,13 @@ public class Common {
     public static final String PASSENGER_PICKUP_LOCATION = "pickupLocation";
     public static final String RIDER_KEY = "Rider key";
     public static final String REQUEST_TECHNICIAN_TITLE = "You have a request!";
+    public static final String TECHNICIAN_KEY = "TechnicianKey";
+    public static final String REQUEST_TECHNICIAN_DECLINE = "Decline";
+    public static final String ACTIVE_REQUESTS_REF = "Active requests";
+    public static final String RIDER_INFO_REFERENCE = "riders";
 
     public static TechnicianInfoModel currentUser;
+    public static String Trip = "Trips";
 
     public static String buildWelcomeMessage() {
 
@@ -108,4 +114,10 @@ public class Common {
         notificationManager.notify(id, notification);
     }
 
+    public static String createUniqueTripIdNumber(long timeOffset) {
+        Random random = new Random();
+        Long current = System.currentTimeMillis() + timeOffset;
+        Long unique = current + random.nextLong() * (random.nextBoolean() ? 1:-1);
+        return String.valueOf(unique);
+    }
 }

@@ -53,6 +53,8 @@ public class TechnicianHomeActivity extends AppCompatActivity {
 
     private AlertDialog waitingDialog;
     private StorageReference storageReference;
+    public static String passenger_details;
+    public static String[] split_details = new String[3];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -69,6 +69,7 @@
                         app:cpb_round_border="false"/>
 
                     <ImageView
+                        android:id="@+id/img_round"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_centerInParent="true"
@@ -109,5 +110,104 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp"/>
         </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/layout_start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="bottom"
+        android:layout_margin="8dp"
+        app:cardBackgroundColor="@color/colorAccent"
+        app:cardCornerRadius="8dp">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:padding="16dp"
+           android:orientation="vertical">
+
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:src="@drawable/ic_baseline_keyboard_arrow_down_24"/>
+
+               <ImageView
+                   android:id="@+id/start"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_marginLeft="8dp"
+                   android:layout_marginRight="8dp"
+                   android:layout_centerHorizontal="true"
+                   android:src="@drawable/ic_baseline_account_circle_24"/>
+
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:id="@+id/txt_time_estimate"
+                   android:layout_centerVertical="true"
+                   android:layout_toLeftOf="@+id/start"/>
+
+               <ImageView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_alignParentRight="true"
+                   android:src="@drawable/ic_baseline_format_list_bulleted_24"/>
+
+           </RelativeLayout>
+
+           <View
+               android:layout_width="match_parent"
+               android:layout_height="1dp"
+               android:layout_marginTop="16dp"
+               android:layout_marginBottom="16dp"
+               android:background="@android:color/darker_gray"/>
+
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+
+               <ImageView
+                   android:id="@+id/img_call_pass"
+                   android:layout_width="30dp"
+                   android:layout_height="30dp"
+                   android:src="@drawable/ic_baseline_phone_24"/>
+
+               <TextView
+                   android:id="@+id/txt_passenger_name"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Joe Mama"
+                   android:textColor="@android:color/black"
+                   android:textSize="22sp"
+                   android:layout_centerInParent="true"
+                   android:textStyle="bold"/>
+
+               <ImageView
+                   android:id="@+id/img_three_dot"
+                   android:layout_width="30dp"
+                   android:layout_height="30dp"
+                   android:layout_alignParentRight="true"
+                   android:src="@drawable/ic_baseline_more_vert_24"/>
+
+           </RelativeLayout>
+
+           <com.kusu.library.LoadingButton
+               android:id="@+id/btn_open_location"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginTop="20dp"
+               android:paddingLeft="10dp"
+               android:paddingRight="10dp"
+               android:text="@string/open_location"
+               android:textColor="@color/white"
+               app:lb_buttonColor="@android:color/holo_orange_dark"
+               app:lb_isCircular="false"/>
+       </LinearLayout>
     </androidx.cardview.widget.CardView>
 </FrameLayout>

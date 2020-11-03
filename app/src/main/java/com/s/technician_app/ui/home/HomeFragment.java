@@ -2,22 +2,28 @@ package com.s.technician_app.ui.home;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +32,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ImageViewCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -69,13 +77,21 @@ import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
+import com.kusu.library.LoadingButton;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 import com.s.technician_app.Common;
 import com.s.technician_app.EventBus.TechnicianRequestReceived;
+import com.s.technician_app.FirebasePojo;
 import com.s.technician_app.LoginActivity;
+import com.s.technician_app.Model.ActiveRequestModel;
+import com.s.technician_app.Model.PassengerGeoModel;
+import com.s.technician_app.Model.RiderModel;
+import com.s.technician_app.Model.TripPlanModel;
 import com.s.technician_app.R;
 import com.s.technician_app.Remote.IGoogleApi;
 import com.s.technician_app.Remote.RetrofitClient;
+import com.s.technician_app.TechnicianHomeActivity;
+import com.s.technician_app.Utils.UserUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -84,16 +100,20 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
@@ -110,6 +130,38 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     TextView txt_estimate_distance;
     @BindView(R.id.root_layout)
     FrameLayout rootLayout;
+    @BindView(R.id.txt_rating)
+    TextView txt_rating;
+    @BindView(R.id.img_round)
+    ImageView img_round;
+    @BindView(R.id.layout_start)
+    CardView layout_start;
+    @BindView(R.id.txt_passenger_name)
+    TextView txt_passenger_name;
+    @BindView(R.id.txt_time_estimate)
+    TextView txt_time_estimate;
+    @BindView(R.id.img_call_pass)
+    ImageView img_call_pass;
+    @BindView(R.id.btn_open_location)
+    LoadingButton btn_open_location;
+    private String tripNumberId = "";
+    private boolean isTripStart = false, onlineSystemAlreadyRegistered = false;
+
+
+    @OnClick(R.id.chip_decline)
+    void onDeclineClick(){
+        if(technicianRequestReceived != null)
+        {
+            if(countDownEvent != null)
+                countDownEvent.dispose();
+            chip_decline.setVisibility(View.GONE);
+            layout_accept.setVisibility(View.GONE);
+            mMap.clear();
+            UserUtils.sendDeclineRequest(rootLayout, getContext(), technicianRequestReceived.getKey());
+            technicianRequestReceived = null;
+            activeRequestRef.removeValue();
+        }
+    }
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private IGoogleApi iGoogleApi;
@@ -123,6 +175,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private SettingsClient mSettingsClient;
     private LocationSettingsRequest mLocationSettingsRequest;
 
+    //Active requests variables
+
+
     //location variales
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
@@ -130,14 +185,33 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     SupportMapFragment mapFragment;
     boolean showsnackBar;
 
+    private TechnicianRequestReceived technicianRequestReceived;
+    private Disposable countDownEvent;
+    private PassengerGeoModel foundPassenger;
+
     //online system
-    DatabaseReference onlineRef, currentUserRef, techniciansLocationRef;
+    DatabaseReference onlineRef, currentUserRef, techniciansLocationRef, activeRequestRef, mDatabase;
     GeoFire geoFire;
     ValueEventListener onlineValueEventListener = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             if (snapshot.exists() && currentUserRef != null) {
                 currentUserRef.onDisconnect().removeValue();
+            }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG)
+                    .show();
+        }
+    };
+
+    ValueEventListener activeRequestValueEventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+            if (snapshot.exists() && activeRequestRef != null) {
+                //currentUserRef.onDisconnect().removeValue();
             }
         }
 
@@ -166,12 +240,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         EventBus.getDefault().unregister(this);
 
         compositeDisposable.clear();
+
+        //if(activeRequestRef != null)
+          //  activeRequestRef.removeValue();
     }
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+        if(activeRequestRef != null)
+            activeRequestRef.removeValue();
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        geoFire.removeLocation(FirebaseAuth.getInstance().getCurrentUser().getUid());
+       // geoFire.removeLocation(FirebaseAuth.getInstance().getCurrentUser().getUid());
         onlineRef.removeEventListener(onlineValueEventListener);
 
         if (EventBus.getDefault().hasSubscriberForEvent(TechnicianRequestReceived.class))
@@ -179,9 +259,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         EventBus.getDefault().unregister(this);
 
         compositeDisposable.clear();
+        onlineSystemAlreadyRegistered = false;
 
-        super.onDestroy();
+
+
     }
+
+
 
     @Override
     public void onResume() {
@@ -201,7 +285,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void registerOnlineSystem() {
-        onlineRef.addValueEventListener(onlineValueEventListener);
+        if(!onlineSystemAlreadyRegistered)
+            onlineRef.addValueEventListener(onlineValueEventListener);
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -209,12 +294,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        startActivity(intent);
-        Toast.makeText(root.getContext(), "This app uses gps to get your location, kindly ensure location setting is on", Toast.LENGTH_LONG).show();
+        if(!isLocationEnabled(getContext())){
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(intent);
+            Toast.makeText(root.getContext(), "This app uses gps to get your location, kindly ensure location setting is on", Toast.LENGTH_LONG).show();
+           // Toast.makeText(root.getContext(), isLocationEnabled(getContext()).toString(), Toast.LENGTH_LONG).show();
+
+        }
 
         initViews(root);
         init();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         showsnackBar = true;
 
@@ -277,40 +368,66 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, 15f));
 
-                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                        List<Address> addressList;
-                        try {
-                            addressList = geocoder.getFromLocation(locationResult.getLastLocation().getLatitude(),
-                                    locationResult.getLastLocation().getLongitude(), 1);
-                            String cityName = addressList.get(0).getCountryName();
-                            Log.d("location", cityName);
+                        if(!isTripStart) {
+
+                            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                            List<Address> addressList;
+                            try {
+                                addressList = geocoder.getFromLocation(locationResult.getLastLocation().getLatitude(),
+                                        locationResult.getLastLocation().getLongitude(), 1);
+                                String cityName = addressList.get(0).getCountryName();
+                                Log.d("location", cityName);
 
 
-                            if (cityName != null) {
-                                techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES)
-                                        .child(cityName);
-                                currentUserRef = techniciansLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                geoFire = new GeoFire(techniciansLocationRef);
-                            } else {
-                                techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES);
-                                currentUserRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                geoFire = new GeoFire(techniciansLocationRef);
+                                if (cityName != null) {
+                                    techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES)
+                                            .child(cityName);
+                                    currentUserRef = techniciansLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    geoFire = new GeoFire(techniciansLocationRef);
+                                } else {
+                                    techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES);
+                                    currentUserRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                    geoFire = new GeoFire(techniciansLocationRef);
+                                }
+
+                                geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                        new GeoLocation(locationResult.getLastLocation().getLatitude()
+                                                , locationResult.getLastLocation().getLongitude()),
+                                        (key, error) -> {
+                                            if (error != null)
+                                                Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG)
+                                                        .show();
+                                        });
+
+
+                                registerOnlineSystem();
+
+                            } catch (IOException e) {
+                                Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
                             }
+                        } else {
 
-                            geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                    new GeoLocation(locationResult.getLastLocation().getLatitude()
-                                            , locationResult.getLastLocation().getLongitude()),
-                                    (key, error) -> {
-                                        if (error != null)
-                                            Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG)
-                                                    .show();
-                                    });
+                            if(!TextUtils.isEmpty(tripNumberId)){
+                                Map<String,Object> update_data = new HashMap<>();
+                                update_data.put("currentLat", locationResult.getLastLocation().getLatitude());
+                                update_data.put("currentLng", locationResult.getLastLocation().getLongitude());
 
+                                FirebaseDatabase.getInstance()
+                                        .getReference(Common.Trip)
+                                        .child(tripNumberId)
+                                        .updateChildren(update_data)
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show();
+                                            }
+                                        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
 
-                            registerOnlineSystem();
-
-                        } catch (IOException e) {
-                            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
                         }
                     }
                 };
@@ -407,6 +524,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     public void onTechnicianRequestReceived(TechnicianRequestReceived event) {
+        ActiveRequestModel activeRequestModel = new ActiveRequestModel();
+        activeRequestModel.setPassengerFirstName(TechnicianHomeActivity.split_details[0]);
+        activeRequestModel.setPassengerLastName(TechnicianHomeActivity.split_details[1]);
+        activeRequestModel.setPassengerPhoneNumber(TechnicianHomeActivity.split_details[2]);
+        activeRequestModel.setTechnicianFirstName(Common.currentUser.getFirstName());
+        activeRequestModel.setTechnicianLastName(Common.currentUser.getLastName());
+        activeRequestModel.setTechnicianNumber(Common.currentUser.getPhoneNumber());
+        activeRequestRef = mDatabase.child("active_requests").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        activeRequestRef.setValue(activeRequestModel);
+        UserUtils.sendNotificationToCallCenter(getContext());
+
+        technicianRequestReceived = event;
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -525,7 +654,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                     })
                                     .takeUntil(aLong -> aLong == 300)
                                     .doOnComplete(() -> {
-                                        Toast.makeText(getContext(), "Fake accept action", Toast.LENGTH_SHORT).show();
+
+                                        createTripPlan(event, duration, distance);
                                     }).subscribe();
 
                         } catch (Exception e)
@@ -534,5 +664,119 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         }
                     }));
         });
+    }
+
+    private void createTripPlan(TechnicianRequestReceived event, String duration, String distance) {
+        setProcessLayout(true);
+
+        //Sync server time with device
+        FirebaseDatabase.getInstance()
+                .getReference(".info/serverTimeOffset")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        long timeOffset = snapshot.getValue(Long.class);
+
+                        FirebaseDatabase.getInstance()
+                                .getReference(Common.RIDER_INFO_REFERENCE)
+                                .child(event.getKey())
+                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if(snapshot.exists()){
+
+                                            RiderModel riderModel = snapshot.getValue(RiderModel.class);
+
+                                            fusedLocationProviderClient.getLastLocation()
+                                                    .addOnFailureListener(e -> Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show())
+                                                    .addOnSuccessListener(location -> {
+
+                                                        TripPlanModel tripPlanModel = new TripPlanModel();
+                                                        tripPlanModel.setTechnician(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                                        tripPlanModel.setRider(event.getKey());
+
+                                                        tripPlanModel.setTechnicianInfoModel(Common.currentUser);
+                                                        tripPlanModel.setRiderModel(riderModel);
+                                                        tripPlanModel.setOrigin(event.getPickupLocation());
+                                                        tripPlanModel.setDistance(distance);
+                                                        tripPlanModel.setDuration(duration);
+                                                        tripPlanModel.setCurrentLat(location.getLatitude());
+                                                        tripPlanModel.setCurrentLong(location.getLongitude());
+
+                                                        tripNumberId = Common.createUniqueTripIdNumber(timeOffset);
+
+                                                        FirebaseDatabase.getInstance()
+                                                                .getReference(Common.Trip)
+                                                                .child(tripNumberId)
+                                                                .setValue(tripPlanModel)
+                                                                .addOnFailureListener(e -> Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show())
+                                                                .addOnSuccessListener(aVoid -> {
+
+                                                                    txt_passenger_name.setText(riderModel.getFirstName());
+                                                                    txt_estimate_time.setText(duration);
+                                                                    txt_estimate_distance.setText(distance);
+
+                                                                    setOfflineModeForTechnician(event, duration, distance);
+                                                                });
+                                                    });
+                                        } else {
+                                            Snackbar.make(mapFragment.getView(), getContext().getString(R.string.rider_not_found) + " " + event.getKey(),
+                                                    Snackbar.LENGTH_LONG).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void setOfflineModeForTechnician(TechnicianRequestReceived event, String duration, String distance) {
+        if(currentUserRef != null)
+            currentUserRef.removeValue();
+
+        setProcessLayout(false);
+        layout_accept.setVisibility(View.GONE);
+        layout_start.setVisibility(View.VISIBLE);
+
+        isTripStart = true;
+    }
+
+    private void setProcessLayout(boolean isProcess) {
+        int color = -1;
+        if(isProcess) {
+            color = ContextCompat.getColor(getContext(), R.color.dark_gray);
+            circularProgressBar.setIndeterminateMode(true);
+        } else {
+            color = ContextCompat.getColor(getContext(), android.R.color.white);
+            circularProgressBar.setIndeterminateMode(true);
+            circularProgressBar.setProgress(0);
+            txt_rating.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_star_24, 0);
+        }
+
+            txt_estimate_time.setTextColor(color);
+            ImageViewCompat.setImageTintList(img_round, ColorStateList.valueOf(color));
+            txt_rating.setTextColor(color);
+            txt_rating.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_baseline_star_24, 0);
+
+    }
+
+    public static Boolean isLocationEnabled(Context context){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
+            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            return lm.isLocationEnabled();
+        } else {
+            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            return (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
     }
 }

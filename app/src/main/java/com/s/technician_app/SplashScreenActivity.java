@@ -75,7 +75,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     private void delaySplashScreen() {
         Completable.timer(3, TimeUnit.SECONDS,
                 AndroidSchedulers.mainThread())
-                .subscribe(() -> startActivity(new Intent(getApplicationContext(), LandingActivity.class))
+                .subscribe(() -> startActivity(new Intent(getApplicationContext(), LoginActivity.class))
 
 
                 );
