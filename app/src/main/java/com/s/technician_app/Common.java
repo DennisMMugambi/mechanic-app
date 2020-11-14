@@ -13,6 +13,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseReference;
 import com.s.technician_app.Model.TechnicianInfoModel;
 import com.s.technician_app.Services.MyFirebaseMessagingService;
 
@@ -33,6 +34,11 @@ public class Common {
     public static final String REQUEST_TECHNICIAN_DECLINE = "Decline";
     public static final String ACTIVE_REQUESTS_REF = "Active requests";
     public static final String RIDER_INFO_REFERENCE = "riders";
+    public static final String CONFIRM_TECHNICIAN_ACCEPT = "Accept";
+    public static final String TRIP_KEY = "TripKey";
+    public static final String TECHNICIAN_COMPLETE_REPAIR = "Repair complete";
+    public static DatabaseReference FIREBASE_TECHNICIAN_REFERENCE = null;
+    public static DatabaseReference FIREBASE_TECHNICIAN_REVIEW_REFERENCE = null;
 
     public static TechnicianInfoModel currentUser;
     public static String Trip = "Trips";
@@ -117,7 +123,8 @@ public class Common {
     public static String createUniqueTripIdNumber(long timeOffset) {
         Random random = new Random();
         Long current = System.currentTimeMillis() + timeOffset;
-        Long unique = current + random.nextLong() * (random.nextBoolean() ? 1:-1);
+        Long unique = current + random.nextLong();
+        if(unique < 0) unique*=(-1);
         return String.valueOf(unique);
     }
 }

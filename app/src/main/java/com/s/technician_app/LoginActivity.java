@@ -288,6 +288,8 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             } else {
 
+                               // TechnicianInfoModel technicianInfoModel = snapshot.getValue(TechnicianInfoModel.class);
+                              //
                                 Intent intent = new Intent(LoginActivity.this, TechnicianHomeActivity.class);
                                 startActivity(intent);
                                 finish();

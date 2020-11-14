@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -21,11 +22,18 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.s.technician_app.Utils.UserUtils;
+import com.s.technician_app.ui.Faults.FaultsFragment;
+import com.s.technician_app.ui.Profile.ProfileFragment;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -55,6 +63,9 @@ public class TechnicianHomeActivity extends AppCompatActivity {
     private StorageReference storageReference;
     public static String passenger_details;
     public static String[] split_details = new String[3];
+    private DatabaseReference technicianRef;
+    private FirebaseDatabase database;
+    private String technician_key;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +73,42 @@ public class TechnicianHomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_technician_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        database = FirebaseDatabase.getInstance();
+        technicianRef = database.getReference("TechnicianInfo");
+        technicianRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Log.d("snapshot exists", "snapshot exists");
+
+                for (DataSnapshot technicianSnapshot: snapshot.getChildren()) {
+                    String t_f_Name = Common.currentUser.getFirstName();//technicianSnapshot.child("firstName").getValue(String.class);
+                    String db_f_name = technicianSnapshot.child("firstName").getValue(String.class);
+                    //technician_key = snapshot.getKey();
+                    String t_l_Name = Common.currentUser.getLastName();//technicianSnapshot.child("lastName").getValue(String.class);
+                    String db_l_name = technicianSnapshot.child("lastName").getValue(String.class);
+                    Log.d("user_name", t_f_Name);
+                    assert db_f_name != null;
+                    Log.d("dbname", db_f_name);
+
+                    if(t_f_Name.equals(db_f_name) && t_l_Name.equals(db_l_name)){
+                        Log.d("result", "result is true");
+                        technician_key = technicianSnapshot.getKey();
+                        Common.FIREBASE_TECHNICIAN_REFERENCE = FirebaseDatabase.getInstance().getReference().child("LiftsCommissioned").child(technician_key);
+                        //  liftsCommissionedRef = database.getReference(technician_key);
+                        // Log.d("key", technician_key);
+                    }
+                  //  Log.d("key", technician_key);
+                  //  Log.d("empty", "technician key is empty");
+                }
+                Common.FIREBASE_TECHNICIAN_REVIEW_REFERENCE = FirebaseDatabase.getInstance().getReference().child("Reviews").child(technician_key);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 /*       FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +122,7 @@ public class TechnicianHomeActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home)
+                R.id.nav_home, R.id.nav_faults, R.id.nav_profile, R.id.nav_sign_out)
                 .setDrawerLayout(drawer)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -92,42 +139,7 @@ public class TechnicianHomeActivity extends AppCompatActivity {
 
         storageReference = FirebaseStorage.getInstance().getReference();
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(item.getItemId() == R.id.nav_logout)
-                {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(TechnicianHomeActivity.this);
-                    builder.setTitle("Sign out")
-                            .setMessage("Confirm you wish to sign out")
-                            .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            }).setPositiveButton("Sign out", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            FirebaseAuth.getInstance().signOut();
-                            Intent intent = new Intent(TechnicianHomeActivity.this, LoginActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
-                        }
-                    })
-                            .setCancelable(false);
-                    AlertDialog dialog = builder.create();
-                    dialog.setOnShowListener(dialogInterface -> {
-                        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                                .setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-                        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-                                .setTextColor(getResources().getColor(R.color.colorAccent));
-                    });
-                    dialog.show();
-                }
-                return true;
-            }
-        });
+
 
         View headerView = navigationView.getHeaderView(0);
         TextView txt_name = (TextView)headerView.findViewById(R.id.txt_name);

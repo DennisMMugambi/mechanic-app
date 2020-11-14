@@ -9,7 +9,15 @@
             android:icon="@drawable/home_new"
             android:title="@string/menu_home" />
         <item
-            android:id="@+id/nav_logout"
+            android:id="@+id/nav_faults"
+            android:icon="@drawable/ic_baseline_build_24"
+            android:title="@string/menu_faults"/>
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_baseline_account_box_24"
+            android:title="@string/menu_profile"/>
+        <item
+            android:id="@+id/nav_sign_out"
             android:icon="@drawable/logout_new"
             android:title="@string/menu_logout" />
     </group>

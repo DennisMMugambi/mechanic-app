@@ -10,4 +10,21 @@
         android:name="com.s.technician_app.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_faults"
+        android:name="com.s.technician_app.ui.Faults.FaultsFragment"
+        android:label="@string/menu_faults"
+        tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="com.s.technician_app.ui.Profile.ProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/nav_sign_out"
+        android:name="com.s.technician_app.ui.SignOut.SignOutFragment"
+        android:label="@string/menu_sign_out"
+        tools:layout="@layout/fragment_sign_out" />
 </navigation>

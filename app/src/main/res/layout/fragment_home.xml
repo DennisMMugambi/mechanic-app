@@ -204,7 +204,7 @@
                android:layout_marginTop="20dp"
                android:paddingLeft="10dp"
                android:paddingRight="10dp"
-               android:text="@string/open_location"
+               android:text="@string/end_repair"
                android:textColor="@color/white"
                app:lb_buttonColor="@android:color/holo_orange_dark"
                app:lb_isCircular="false"/>

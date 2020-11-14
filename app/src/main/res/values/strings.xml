@@ -91,4 +91,13 @@
     <string name="click_to_view_request">Clickto view active requests</string>
     <string name="open_location">Open Location</string>
     <string name="rider_not_found">"Cannot find passenger with key "</string>
+    <string name="menu_faults">Faults</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_sign_out">Sign Out</string>
+    <string name="sample_name">John Doe</string>
+    <string name="sample_rating">4.5</string>
+    <string name="Accept_failed">Accept failed</string>
+    <string name="end_repair">End Repair</string>
+    <string name="Complete_failed">Action complete repair failed</string>
+    <string name="Complete_success">Technician has completed repair session</string>
 </resources>

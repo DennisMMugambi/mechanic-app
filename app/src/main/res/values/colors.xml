@@ -5,6 +5,7 @@
     <color name="colorPrimaryDark">#0f53bf</color>
     <color name="colorAccent">#0f53bf</color>
     <color name="colorDarkBlue">#0f53bf</color>
+    <color name="light_blue">#add8e6</color>
 
     <color name="login_form_detail_light">#1affffff</color>
     <color name="login_form_detail">#ccffffff</color>
@@ -12,4 +13,5 @@
     <color name="progress_bar_color">#151828</color>
     <color name="black_overlay">#66000000</color>
     <color name="dark_gray">#656565</color>
+    <color name="card_grey">#b4f0e3</color>
 </resources>

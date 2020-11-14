@@ -123,12 +123,14 @@ public class UserUtils {
                             }
 
                         } else {
+                            compositeDisposable.clear();
                             Snackbar.make(view, context.getString(R.string.token_not_found), Snackbar.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+                        compositeDisposable.clear();
                         Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG).show();
                     }
                 });
@@ -187,5 +189,124 @@ public class UserUtils {
         // resources object and R.drawable.ic_local_drink_black_24px
         Bitmap largeIcon = BitmapFactory.decodeResource(res, R.drawable.ic_person_pin);
         return largeIcon;
+    }
+
+    public static void sendAcceptConfirmationToRider(View view, Context context, String key, String tripNumberId) {
+        CompositeDisposable compositeDisposable = new CompositeDisposable();
+        IFCMService ifcmService = RetrofitFCMClient.getInstance().create(IFCMService.class);
+
+        FirebaseDatabase
+                .getInstance()
+                .getReference(Common.TOKEN_REFERENCE)
+                .child(key)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+
+                            TokenModel tokenModel = snapshot.getValue(TokenModel.class);
+
+                            Map<String, String> notificationData = new HashMap<>();
+                            notificationData.put(Common.NOTIFICATION_TITLE, Common.CONFIRM_TECHNICIAN_ACCEPT);
+                            notificationData.put(Common.NOTIFICATION_CONTENT, "This message represents technician accept action");
+                            notificationData.put(Common.TECHNICIAN_KEY, FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            notificationData.put(Common.TRIP_KEY, tripNumberId);
+
+                            if(tokenModel.getToken() != null) {
+                                FCMSendData fcmSendData = new FCMSendData(tokenModel.getToken(), notificationData);
+                                Log.d("token", tokenModel.getToken());
+
+                                compositeDisposable.add(ifcmService.sendNotification(fcmSendData)
+                                        .subscribeOn(Schedulers.newThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(fcmResponse -> {
+                                            if(fcmResponse.getSuccess() == 0)
+                                            {
+                                                compositeDisposable.clear();
+                                                Snackbar.make(view , context.getString(R.string.Accept_failed), Snackbar.LENGTH_LONG).show();
+                                            }
+
+                                        }, throwable -> {
+
+                                            compositeDisposable.clear();
+                                            Snackbar.make(view, throwable.getMessage(), Snackbar.LENGTH_LONG).show();
+                                        }));}
+                            else {
+                                Log.d("Token", "no token provided");
+                            }
+
+                        } else {
+                            compositeDisposable.clear();
+                            Snackbar.make(view, context.getString(R.string.token_not_found), Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        compositeDisposable.clear();
+                        Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    public static void sendCompleteTripToRider(View view, Context context, String key, String tripNumberId) {
+
+        CompositeDisposable compositeDisposable = new CompositeDisposable();
+        IFCMService ifcmService = RetrofitFCMClient.getInstance().create(IFCMService.class);
+
+        FirebaseDatabase
+                .getInstance()
+                .getReference(Common.TOKEN_REFERENCE)
+                .child(key)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+
+                            TokenModel tokenModel = snapshot.getValue(TokenModel.class);
+
+                            Map<String, String> notificationData = new HashMap<>();
+                            notificationData.put(Common.NOTIFICATION_TITLE, Common.TECHNICIAN_COMPLETE_REPAIR);
+                            notificationData.put(Common.NOTIFICATION_CONTENT, "This message represents technician complete action");
+                            notificationData.put(Common.TECHNICIAN_KEY, FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                            if(tokenModel.getToken() != null) {
+                                FCMSendData fcmSendData = new FCMSendData(tokenModel.getToken(), notificationData);
+                                Log.d("token", tokenModel.getToken());
+
+                                compositeDisposable.add(ifcmService.sendNotification(fcmSendData)
+                                        .subscribeOn(Schedulers.newThread())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(fcmResponse -> {
+                                            if(fcmResponse.getSuccess() == 0)
+                                            {
+                                                compositeDisposable.clear();
+                                                Snackbar.make(view , context.getString(R.string.Complete_failed), Snackbar.LENGTH_LONG).show();
+                                            }
+                                            else {
+                                                Snackbar.make(view , context.getString(R.string.Complete_success), Snackbar.LENGTH_LONG).show();
+                                            }
+
+                                        }, throwable -> {
+
+                                            compositeDisposable.clear();
+                                            Snackbar.make(view, throwable.getMessage(), Snackbar.LENGTH_LONG).show();
+                                        }));}
+                            else {
+                                Log.d("Token", "no token provided");
+                            }
+
+                        } else {
+                            compositeDisposable.clear();
+                            Snackbar.make(view, context.getString(R.string.token_not_found), Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        compositeDisposable.clear();
+                        Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG).show();
+                    }
+                });
     }
 }
