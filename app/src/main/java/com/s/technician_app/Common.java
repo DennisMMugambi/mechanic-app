@@ -28,6 +28,7 @@ public class Common {
     public static final String NOTIFICATION_TITLE = "title";
     public static final String NOTIFICATION_CONTENT = "body";
     public static final String PASSENGER_PICKUP_LOCATION = "pickupLocation";
+    public static int numRequests;
     public static final String RIDER_KEY = "Rider key";
     public static final String REQUEST_TECHNICIAN_TITLE = "You have a request!";
     public static final String TECHNICIAN_KEY = "TechnicianKey";

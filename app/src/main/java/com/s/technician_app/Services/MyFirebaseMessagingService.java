@@ -9,9 +9,9 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.s.technician_app.Common;
 import com.s.technician_app.EventBus.TechnicianRequestReceived;
-import com.s.technician_app.HomeFragment;
 import com.s.technician_app.TechnicianHomeActivity;
 import com.s.technician_app.Utils.UserUtils;
+import com.s.technician_app.ui.home.HomeFragment;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -46,7 +46,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 TechnicianHomeActivity.split_details = passenger_details.split(",");
 
-                //TechnicianRequestReceived technicianRequestReceived = new TechnicianRequestReceived();
+                TechnicianRequestReceived technicianRequestReceived = new TechnicianRequestReceived();
+                //HomeFragment.onTechnicianRequestReceived(technicianRequestReceived);
 
 
                 EventBus.getDefault().postSticky(new TechnicianRequestReceived(

@@ -26,7 +26,7 @@
         android:id="@+id/iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="30sp"
         android:src="@mipmap/ic_launcher_round"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/hint_email"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20sp"
         android:padding="16dp"
         android:textColorHint="@color/login_form_detail"
         app:layout_constraintEnd_toStartOf="@id/guideline_right"
@@ -47,27 +47,33 @@
         android:inputType="textEmailAddress"
         android:background="@drawable/et_bg"/>
 
-    <EditText
-        android:id="@+id/password"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/etPasswordLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textColorHint="@color/login_form_detail"
-        android:background="@drawable/et_bg"
-        android:hint="@string/hint_password"
-        android:inputType="textPassword"
-        android:drawableEnd="@drawable/visibility"
-        android:padding="16dp"
+        app:passwordToggleEnabled="true"
         app:layout_constraintEnd_toStartOf="@id/guideline_right"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toBottomOf="@+id/username">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16sp"
+            android:textColorHint="@color/login_form_detail"
+            android:background="@drawable/et_bg"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/btn_login"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="16sp"
         android:background="@drawable/btn_bg"
         android:padding="16dp"
         android:text="@string/login"
@@ -76,13 +82,13 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline_right"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline_left"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/etPasswordLayout" />
 
     <TextView
         android:id="@+id/forgot_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="16sp"
         android:text="@string/forgot_pass"
         android:textColor="@color/login_form_detail"
         app:layout_constraintEnd_toStartOf="@+id/guideline_right"
@@ -93,7 +99,7 @@
         android:id="@+id/btn_phone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="56sp"
         android:background="@drawable/btn_bg"
         android:drawableStart="@drawable/phone"
         android:text="@string/phone_sign_in"
@@ -120,7 +126,7 @@
         android:id="@+id/bottom_line"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="50sp"
         android:background="#fff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -84,7 +84,7 @@ public class ProfileFragment extends Fragment {
                     return "Reviews";
                 // break;
                 case 1:
-                    return "Lifts Commissioned";
+                    return "Repair History";
                 // break;
                 default :
                     return null;

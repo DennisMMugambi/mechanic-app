@@ -11,19 +11,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.firebase.geofire.GeoFire;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.s.technician_app.Common;
 import com.s.technician_app.LoginActivity;
 import com.s.technician_app.R;
 
 
 public class SignOutFragment extends Fragment {
+    GeoFire geoFire;
+    DatabaseReference techniciansLocationRef;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_sign_out, container, false);
-
+        techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES);
+        geoFire = new GeoFire(techniciansLocationRef);
                     AlertDialog.Builder builder = new AlertDialog.Builder(root.getContext());
                     builder.setTitle("Sign out")
                             .setMessage("Confirm you wish to sign out")
@@ -35,6 +42,7 @@ public class SignOutFragment extends Fragment {
                             }).setPositiveButton("Sign out", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            geoFire.removeLocation(FirebaseAuth.getInstance().getCurrentUser().getUid());
                             FirebaseAuth.getInstance().signOut();
                             Intent intent = new Intent(root.getContext(), LoginActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

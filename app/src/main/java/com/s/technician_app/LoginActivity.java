@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference technicianInfoRef;
     ConstraintLayout constraintLayout;
+    TechnicianInfoModel technicianInfoModelLogin;
 
 
 
@@ -284,15 +285,35 @@ public class LoginActivity extends AppCompatActivity {
                                 if (password.length() < 6) {
                                     mPassword.setError(getString(R.string.minimum_password));
                                 } else {
-                                    Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(LoginActivity.this, getString(R.string.auth_has_failed), Toast.LENGTH_LONG).show();
                                 }
                             } else {
 
                                // TechnicianInfoModel technicianInfoModel = snapshot.getValue(TechnicianInfoModel.class);
                               //
-                                Intent intent = new Intent(LoginActivity.this, TechnicianHomeActivity.class);
-                                startActivity(intent);
-                                finish();
+                                technicianInfoRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                if(snapshot.exists()){
+                                                    //add a visual cue to let user know you're processing
+                                                    //Toast.makeText(LoginActivity.this, "user already exists", Toast.LENGTH_SHORT).show();
+                                                    Snackbar.make(constraintLayout, "Automatically logging you in", Snackbar.LENGTH_LONG).show();
+                                                    TechnicianInfoModel technicianInfoModel = snapshot.getValue(TechnicianInfoModel.class);
+                                                    goToHomeActivity(technicianInfoModel);
+                                                } else {
+                                                    //showRegisterLayout();
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Toast.makeText(LoginActivity.this, ""+ error.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                               // Intent intent = new Intent(LoginActivity.this, TechnicianHomeActivity.class);
+                               // startActivity(intent);
+                               // finish();
                             }
                         }
                     });

@@ -149,6 +149,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     LoadingButton btn_open_location;
     private String tripNumberId = "";
     private boolean isTripStart = false, onlineSystemAlreadyRegistered = false;
+    private String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
     @OnClick(R.id.btn_open_location)
     void onCompleteClick() {
@@ -203,6 +204,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                         technicianRequestReceived = null;
                         //makeTechnicianOnLine(location)
+                        makeDriverOnline(location);
                     }
                 });
             }
@@ -213,15 +215,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @OnClick(R.id.chip_decline)
     void onDeclineClick() {
         if (technicianRequestReceived != null) {
-            if (countDownEvent != null)
-                countDownEvent.dispose();
-            chip_decline.setVisibility(View.GONE);
-            layout_accept.setVisibility(View.GONE);
-            layout_start.setVisibility(View.GONE);
-            mMap.clear();
-            UserUtils.sendDeclineRequest(rootLayout, getContext(), technicianRequestReceived.getKey());
-            technicianRequestReceived = null;
-            activeRequestRef.removeValue();
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getContext(), getString(R.string.permission_require), Toast.LENGTH_LONG).show();
+                return;
+            }
+            fusedLocationProviderClient.getLastLocation()
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(), "Failed to fetch new location", Toast.LENGTH_LONG).show();
+                        }
+                    }).addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (countDownEvent != null)
+                        countDownEvent.dispose();
+                    chip_decline.setVisibility(View.GONE);
+                    layout_accept.setVisibility(View.GONE);
+                    layout_start.setVisibility(View.GONE);
+                    mMap.clear();
+                    UserUtils.sendDeclineRequest(rootLayout, getContext(), technicianRequestReceived.getKey());
+                    technicianRequestReceived = null;
+                    activeRequestRef.removeValue();
+                    //makeDriverOnline(location);
+                }
+            });
         }
     }
 
@@ -287,11 +306,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onPause() {
         super.onPause();
-        //if (EventBus.getDefault().hasSubscriberForEvent(TechnicianRequestReceived.class))
-        ///   EventBus.getDefault().removeStickyEvent(TechnicianRequestReceived.class);
-        //EventBus.getDefault().unregister(this);
+        if (EventBus.getDefault().hasSubscriberForEvent(TechnicianRequestReceived.class))
+           EventBus.getDefault().removeStickyEvent(TechnicianRequestReceived.class);
+        EventBus.getDefault().unregister(this);
 
-        //compositeDisposable.clear();
+        compositeDisposable.clear();
     }
 
     @Override
@@ -300,6 +319,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         if (EventBus.getDefault().hasSubscriberForEvent(TechnicianRequestReceived.class))
             EventBus.getDefault().removeStickyEvent(TechnicianRequestReceived.class);
         EventBus.getDefault().unregister(this);
+      //  geoFire.removeLocation(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        //techniciansLocationRef.removeValue();
 
         compositeDisposable.clear();
 
@@ -310,10 +331,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        geoFire.removeLocation(Objects.requireNonNull(uid));
         if (activeRequestRef != null)
             activeRequestRef.removeValue();
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
-        // geoFire.removeLocation(FirebaseAuth.getInstance().getCurrentUser().getUid());
         onlineRef.removeEventListener(onlineValueEventListener);
 
         if (EventBus.getDefault().hasSubscriberForEvent(TechnicianRequestReceived.class))
@@ -322,7 +343,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         compositeDisposable.clear();
         onlineSystemAlreadyRegistered = false;
-
 
     }
 
@@ -339,9 +359,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onStart() {
         super.onStart();
-        // if(!EventBus.getDefault().isRegistered(this)) {
+        if(!EventBus.getDefault().isRegistered(this)) {
         EventBus.getDefault().register(this);
-        //}
+        }
     }
 
     private void registerOnlineSystem() {
@@ -434,41 +454,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                     if (!isTripStart) {
 
-                        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-                        List<Address> addressList;
-                        try {
-                            addressList = geocoder.getFromLocation(locationResult.getLastLocation().getLatitude(),
-                                    locationResult.getLastLocation().getLongitude(), 1);
-                            String cityName = addressList.get(0).getCountryName();
-                            Log.d("location", cityName);
-
-
-                            if (cityName != null) {
-                                techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES)
-                                        .child(cityName);
-                                currentUserRef = techniciansLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                geoFire = new GeoFire(techniciansLocationRef);
-                            } else {
-                                techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES);
-                                currentUserRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                                geoFire = new GeoFire(techniciansLocationRef);
-                            }
-
-                            geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                    new GeoLocation(locationResult.getLastLocation().getLatitude()
-                                            , locationResult.getLastLocation().getLongitude()),
-                                    (key, error) -> {
-                                        if (error != null)
-                                            Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG)
-                                                    .show();
-                                    });
-
-
-                            registerOnlineSystem();
-
-                        } catch (IOException e) {
-                            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
-                        }
+                        makeDriverOnline(locationResult.getLastLocation());
                     } else {
 
                         if (!TextUtils.isEmpty(tripNumberId)) {
@@ -495,6 +481,44 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     }
                 }
             };
+        }
+    }
+
+    private void makeDriverOnline(Location lastLocation) {
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        List<Address> addressList;
+        try {
+            addressList = geocoder.getFromLocation(lastLocation.getLatitude(),
+                    lastLocation.getLongitude(), 1);
+            String cityName = addressList.get(0).getCountryName();
+            Log.d("location", cityName);
+
+
+            if (cityName != null) {
+                techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES)
+                        .child(cityName);
+                currentUserRef = techniciansLocationRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                geoFire = new GeoFire(techniciansLocationRef);
+            } else {
+                techniciansLocationRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES);
+                currentUserRef = FirebaseDatabase.getInstance().getReference(Common.TECHNICIAN_LOCATION_REFERENCES).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                geoFire = new GeoFire(techniciansLocationRef);
+            }
+
+            geoFire.setLocation(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                    new GeoLocation(lastLocation.getLatitude(),
+                            lastLocation.getLongitude()),
+                    (key, error) -> {
+                        if (error != null)
+                            Snackbar.make(mapFragment.getView(), error.getMessage(), Snackbar.LENGTH_LONG)
+                                    .show();
+                    });
+
+
+            registerOnlineSystem();
+
+        } catch (IOException e) {
+            Snackbar.make(getView(), e.getMessage(), Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -789,7 +813,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                                                 .getReference(Common.Trip)
                                                                 .child(tripNumberId)
                                                                 .setValue(tripPlanModel)
-                                                                .addOnFailureListener(e -> Snackbar.make(mapFragment.getView(), e.getMessage(), Snackbar.LENGTH_LONG).show())
+                                                                .addOnFailureListener(e -> Snackbar.make(mapFragment.getView(), e.getMessage(),
+                                                                        Snackbar.LENGTH_LONG).show())
                                                                 .addOnSuccessListener(aVoid -> {
 
                                                                     txt_passenger_name.setText(riderModel.getFirstName());

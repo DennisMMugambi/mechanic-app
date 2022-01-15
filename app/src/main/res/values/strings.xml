@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">technician-app</string>
+    <string name="app_name">Mechanic-app</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
@@ -11,7 +11,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="rating">0.0</string>
-    <string name="technician">Technician</string>
+    <string name="technician">Mechanic</string>
     <string name="passenger">Passenger</string>
     <string name="client">Client</string>
     <string name="hint_email">Email Address</string>
@@ -34,8 +34,8 @@
     if you did not receive any.</string>
     <string name="resend">RESEND</string>
     <string name="btn_proceed">PROCEED</string>
-    <string name="emergency">EMERGENCY APP</string>
-    <string name="directions_api_key">AIzaSyA6MUqPRN-Mxfp8H8yp1NmWpOHbhm8C0Ew</string>
+    <string name="emergency">MECHANIC APP</string>
+    <string name="directions_api_key">AIzaSyAYxugo52-sjTXt0zlyL2srs_D8nmUkCSk</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="drawer_open">Open navigation drawer</string>
@@ -85,7 +85,7 @@
     <string name="Decline_failed">Decline Failed</string>
     <string name="Decline_success">You have declined this request.</string>
     <string name="call_pass">Call passenger</string>
-    <string name="call_tech">Call technician</string>
+    <string name="call_tech">Call mechanic</string>
     <string name="active_request_channel_name">Active requests channel</string>
     <string name="new_active_request">New Active Request</string>
     <string name="click_to_view_request">Clickto view active requests</string>
@@ -99,5 +99,6 @@
     <string name="Accept_failed">Accept failed</string>
     <string name="end_repair">End Repair</string>
     <string name="Complete_failed">Action complete repair failed</string>
-    <string name="Complete_success">Technician has completed repair session</string>
+    <string name="Complete_success">Mechanic has completed repair session</string>
+    <string name="auth_has_failed">Kindly check your details or network connection and try again.</string>
 </resources>

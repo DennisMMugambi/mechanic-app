@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,13 +28,15 @@ public class ReviewsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private String technician_key;
     private FirebaseDatabase database;
+    private ProgressBar progressBar;
+    private boolean isFinish;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_reviews, container, false);
         mRef = Common.FIREBASE_TECHNICIAN_REVIEW_REFERENCE;
-        Toast.makeText(root.getContext(), Common.FIREBASE_TECHNICIAN_REFERENCE.toString(), Toast.LENGTH_LONG).show();
+       // Toast.makeText(root.getContext(), Common.FIREBASE_TECHNICIAN_REFERENCE.toString(), Toast.LENGTH_LONG).show();
         mRecyclerView = (RecyclerView) root.findViewById(R.id.reviews_rv);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         return root;
@@ -70,7 +73,6 @@ public class ReviewsFragment extends Fragment {
         }
         void setupViews(String reviews){
             TextView review = (TextView) mView.findViewById(R.id.review_text_view);
-
 
             review.setText(reviews);
 

@@ -11,11 +11,6 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
 
-    <fragment
-        android:id="@+id/nav_faults"
-        android:name="com.s.technician_app.ui.Faults.FaultsFragment"
-        android:label="@string/menu_faults"
-        tools:layout="@layout/fragment_slideshow" />
 
     <fragment
         android:id="@+id/nav_profile"
